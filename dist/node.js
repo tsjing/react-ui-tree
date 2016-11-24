@@ -29,7 +29,6 @@ var Node = React.createClass({
     var index = this.props.index;
     var tree = this.props.tree;
     var dragging = this.props.dragging;
-
     if (index.children && index.children.length) {
       var childrenStyles = {};
       if (index.node.collapsed) childrenStyles.display = 'none';
@@ -47,7 +46,8 @@ var Node = React.createClass({
             dragging: dragging,
             paddingLeft: _this.props.paddingLeft,
             onCollapse: _this.props.onCollapse,
-            onDragStart: _this.props.onDragStart
+            onDragStart: _this.props.onDragStart,
+            activeId: _this.props.activeId
           });
         })
       );
@@ -61,6 +61,7 @@ var Node = React.createClass({
     var dragging = this.props.dragging;
     var node = index.node;
     var styles = {};
+    var className = this.props.activeId === node.id ? 'inner inner-active' : 'inner';
 
     return React.createElement(
       'div',
@@ -69,7 +70,7 @@ var Node = React.createClass({
         }), style: styles },
       React.createElement(
         'div',
-        { className: 'inner', ref: 'inner', onMouseDown: this.handleMouseDown },
+        { className: className, ref: 'inner', onMouseDown: this.handleMouseDown },
         this.renderCollapse(),
         tree.renderNode(node)
       ),

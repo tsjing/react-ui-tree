@@ -10,18 +10,25 @@ module.exports = React.createClass({
   propTypes: {
     tree: React.PropTypes.object.isRequired,
     paddingLeft: React.PropTypes.number,
-    renderNode: React.PropTypes.func.isRequired
+    renderNode: React.PropTypes.func.isRequired,
+    onDragStart: React.PropTypes.func,
+    activeId: React.PropTypes.string
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
-      paddingLeft: 20
+      paddingLeft: 20,
+      onDragStart: function onDragStart() {}
     };
   },
   getInitialState: function getInitialState() {
     return this.init(this.props);
   },
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+
+    this.setState(this.init(nextProps));
+    return;
+    // was:
     if (!this._updated) this.setState(this.init(nextProps));else this._updated = false;
   },
   init: function init(props) {
@@ -83,11 +90,17 @@ module.exports = React.createClass({
         paddingLeft: this.props.paddingLeft,
         onDragStart: this.dragStart,
         onCollapse: this.toggleCollapse,
-        dragging: dragging && dragging.id
+        dragging: dragging && dragging.id,
+        activeId: this.props.activeId
       })
     );
   },
   dragStart: function dragStart(id, dom, e) {
+
+    var index = this.state.tree.getIndex(id);
+    this.props.onDragStart(e, index.node);
+    this.draggedNode = index.node;
+
     this.dragging = {
       id: id,
       w: dom.offsetWidth,
@@ -105,6 +118,7 @@ module.exports = React.createClass({
     window.addEventListener('mousemove', this.drag);
     window.addEventListener('mouseup', this.dragEnd);
   },
+
 
   // oh
   drag: function drag(e) {
@@ -204,7 +218,7 @@ module.exports = React.createClass({
       }
     });
 
-    this.change(this.state.tree);
+    this.change(this.state.tree, this.draggedNode);
     window.removeEventListener('mousemove', this.drag);
     window.removeEventListener('mouseup', this.dragEnd);
   },
