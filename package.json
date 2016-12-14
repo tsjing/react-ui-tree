@@ -1,5 +1,5 @@
 {
-  "name": "react-ui-tree",
+  "name": "@tsjing/react-ui-tree",
   "version": "2.5.0",
   "description": "React tree component",
   "main": "index.js",
